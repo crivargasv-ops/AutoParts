@@ -99,7 +99,7 @@ class T(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         opts = webdriver.ChromeOptions()
-    
+        opts.add_argument("--headless=new")
         opts.add_argument("--disable-gpu")
         opts.add_argument("--window-size=1366,900")
         opts.add_argument("--no-sandbox")
@@ -107,6 +107,7 @@ class T(unittest.TestCase):
         opts.add_experimental_option("excludeSwitches", ["enable-logging"])
         cls.d = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=opts)
         cls.w = WebDriverWait(cls.d, 15)
+
         s = rs()
         cls.user = {"u": f"user{s}", "e": f"user{s}@test.local", "p": f"Passw0rd!{s}"}
         cls.prod_tag = f"Prod{rs(5)}"
