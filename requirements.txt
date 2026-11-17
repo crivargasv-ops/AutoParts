@@ -5,3 +5,4 @@ sqlparse==0.5.3
 Pillow==11.2.1
 phonenumbers==9.0.6
 django-jazzmin
+transbank-sdk
