@@ -25,5 +25,26 @@ jobs:
         run: |
           docker run --rm \
             -e DJANGO_SETTINGS_MODULE=AutoParts.settings \
-            autoparts:test \
-            python manage.py test
+            autoparts:test sh -c '
+              python manage.py migrate --noinput || exit 1
+
+              python manage.py runserver 127.0.0.1:8000 --noreload > /tmp/django.log 2>&1 &
+              SERVER_PID=$!
+              trap "kill $SERVER_PID 2>/dev/null || true" EXIT
+
+              READY=0
+              for i in $(seq 1 30); do
+                if python -c "import socket; socket.create_connection((\"127.0.0.1\", 8000), 1).close()" >/dev/null 2>&1; then
+                  READY=1
+                  break
+                fi
+                sleep 1
+              done
+
+              if [ "$READY" -ne 1 ]; then
+                cat /tmp/django.log
+                exit 1
+              fi
+
+              python manage.py test
+            '
