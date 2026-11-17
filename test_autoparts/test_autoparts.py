@@ -104,12 +104,24 @@ class T(unittest.TestCase):
         opts.add_argument("--window-size=1366,900")
         opts.add_argument("--no-sandbox")
         opts.add_argument("--disable-dev-shm-usage")
-        opts.add_experimental_option("excludeSwitches", ["enable-logging"])
-        cls.d = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=opts)
+        
+        driver_path = "/usr/bin/chromedriver"
+
+        if os.path.exists(driver_path):
+            opts.binary_location = "/usr/bin/chromium"
+            service = Service(driver_path)
+        else:
+            service = Service(ChromeDriverManager().install())
+
+        cls.d = webdriver.Chrome(service=service, options=opts)
         cls.w = WebDriverWait(cls.d, 15)
 
         s = rs()
-        cls.user = {"u": f"user{s}", "e": f"user{s}@test.local", "p": f"Passw0rd!{s}"}
+        cls.user = {
+            "u": f"user{s}",
+            "e": f"user{s}@test.local",
+            "p": f"Passw0rd!{s}"
+        }
         cls.prod_tag = f"Prod{rs(5)}"
         cls.created_product_name = None
 
@@ -118,7 +130,6 @@ class T(unittest.TestCase):
         pause(1.0)
         cls.d.quit()
 
-   
     def test_01_registro(self):
         self.assertTrue(open_first(self.d, ["/registrarse/", "/register/"]), "No abre registro")
         click_any(self.d, [
