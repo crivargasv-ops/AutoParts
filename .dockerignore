@@ -1,0 +1,17 @@
+.git
+.github
+.env
+.env.*
+.venv
+venv
+__pycache__
+*.pyc
+*.sqlite3
+*.log
+*.pem
+*.key
+*.p12
+.coverage
+coverage.xml
+htmlcov
+.pytest_cache
