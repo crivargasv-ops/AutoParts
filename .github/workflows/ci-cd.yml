@@ -22,10 +22,13 @@ jobs:
         run: docker build -t autoparts:test .
 
       - name: Ejecutar pruebas Django
+        env:
+          DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
         run: |
           docker run --rm \
+            -e DJANGO_SECRET_KEY \
             -e DJANGO_SETTINGS_MODULE=AutoParts.settings \
-            autoparts:test sh -c '
+
               python manage.py migrate --noinput || exit 1
 
               python manage.py runserver 127.0.0.1:8000 --noreload > /tmp/django.log 2>&1 &
